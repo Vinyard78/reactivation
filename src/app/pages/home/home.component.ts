@@ -1,177 +1,146 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatSort, MatTableDataSource } from '@angular/material';
-import {animate, state, style, transition, trigger} from '@angular/animations';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { QuestionService, Question } from '../../services/question.service';
+import { AddQuestionDialogComponent, dataDialog } from '../../modals/add-question-dialog/add-question-dialog.component';
 
-interface QuestionReponse {
-	date: Date;
-	question: string;
-	reponse: string;
-	matiere: string;
-}
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-}
-
-
-
-const QUESTIONSREPONSES: QuestionReponse[] = [
-	{
-		date: new Date(Date.now()),
-		matiere: "Histoire",
-		question: "Date de Marignan ?",
-		reponse: "1515"
-	},
-	{
-		date: new Date(Date.now()),
-		matiere: "Histoire",
-		question: "Couronnement de Charlemagne ?",
-		reponse: "800"
-	},
-	{
-		date: new Date(Date.now()),
-		matiere: "SVT",
-		question: "Citez deux moyens de contraception.",
-		reponse: "La sodomie et le blowjob"
-	},
-	{
-		date: new Date(Date.now()),
-		matiere: "Maths",
-		question: `Quelle est la dérivée de cosinus ? 
-			$$
-			\\Pr\\left(\\bigcup_i \\Omega_i\\right)=\\sum_i \\Pr(\\Omega_i)=\\sum_i\\Pr(X=u_i)=1
-			$$
-		`,
-		reponse: "-sin"
-	}
-]
-
-
-export interface PeriodicElement {
-  name: string;
-  position: number;
-  weight: number;
-  symbol: string;
-  description: string;
-}
-
-const ELEMENT_DATA: PeriodicElement[] = [
-  {
-    position: 1,
-    name: 'Hydrogen',
-    weight: 1.0079,
-    symbol: 'H',
-    description: `Hydrogen is a chemical element with symbol H and atomic number 1. With a standard
-        atomic weight of 1.008, hydrogen is the lightest element on the periodic table.`
-  }, {
-    position: 2,
-    name: 'Helium',
-    weight: 4.0026,
-    symbol: 'He',
-    description: `Helium is a chemical element with symbol He and atomic number 2. It is a
-        colorless, odorless, tasteless, non-toxic, inert, monatomic gas, the first in the noble gas
-        group in the periodic table. Its boiling point is the lowest among all the elements.`
-  }, {
-    position: 3,
-    name: 'Lithium',
-    weight: 6.941,
-    symbol: 'Li',
-    description: `Lithium is a chemical element with symbol Li and atomic number 3. It is a soft,
-        silvery-white alkali metal. Under standard conditions, it is the lightest metal and the
-        lightest solid element.`
-  }, {
-    position: 4,
-    name: 'Beryllium',
-    weight: 9.0122,
-    symbol: 'Be',
-    description: `Beryllium is a chemical element with symbol Be and atomic number 4. It is a
-        relatively rare element in the universe, usually occurring as a product of the spallation of
-        larger atomic nuclei that have collided with cosmic rays.`
-  }, {
-    position: 5,
-    name: 'Boron',
-    weight: 10.811,
-    symbol: 'B',
-    description: `Boron is a chemical element with symbol B and atomic number 5. Produced entirely
-        by cosmic ray spallation and supernovae and not by stellar nucleosynthesis, it is a
-        low-abundance element in the Solar system and in the Earth's crust.`
-  }, {
-    position: 6,
-    name: 'Carbon',
-    weight: 12.0107,
-    symbol: 'C',
-    description: `Carbon is a chemical element with symbol C and atomic number 6. It is nonmetallic
-        and tetravalent—making four electrons available to form covalent chemical bonds. It belongs
-        to group 14 of the periodic table.`
-  }, {
-    position: 7,
-    name: 'Nitrogen',
-    weight: 14.0067,
-    symbol: 'N',
-    description: `Nitrogen is a chemical element with symbol N and atomic number 7. It was first
-        discovered and isolated by Scottish physician Daniel Rutherford in 1772.`
-  }, {
-    position: 8,
-    name: 'Oxygen',
-    weight: 15.9994,
-    symbol: 'O',
-    description: `Oxygen is a chemical element with symbol O and atomic number 8. It is a member of
-         the chalcogen group on the periodic table, a highly reactive nonmetal, and an oxidizing
-         agent that readily forms oxides with most elements as well as with other compounds.`
-  }, {
-    position: 9,
-    name: 'Fluorine',
-    weight: 18.9984,
-    symbol: 'F',
-    description: `Fluorine is a chemical element with symbol F and atomic number 9. It is the
-        lightest halogen and exists as a highly toxic pale yellow diatomic gas at standard
-        conditions.`
-  }, {
-    position: 10,
-    name: 'Neon',
-    weight: 20.1797,
-    symbol: 'Ne',
-    description: `Neon is a chemical element with symbol Ne and atomic number 10. It is a noble gas.
-        Neon is a colorless, odorless, inert monatomic gas under standard conditions, with about
-        two-thirds the density of air.`
-  },
-];
-
-
+const ECART:number[] = [2,6,13,30,90];
 
 @Component({
-	selector: 'app-home',
-	templateUrl: './home.component.html',
-	styleUrls: ['./home.component.scss'],
-	animations: [
-    trigger('detailExpand', [
-      state('collapsed', style({height: '0px', minHeight: '0', display: 'none'})),
-      state('expanded', style({height: '*'})),
-      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+    selector: 'app-home',
+    templateUrl: './home.component.html',
+    styleUrls: ['./home.component.scss']
 })
 export class HomeComponent {
 
-	displayedColumns: string[] = ['position', 'name', 'weight', 'symbol'];
-  	//dataSource = new MatTableDataSource(QUESTIONSREPONSES);
-  	dataSource = ELEMENT_DATA;
-  columnsToDisplay = ['name', 'weight', 'symbol', 'position'];
-  expandedElement: PeriodicElement | null;
+    displayedColumns: string[] = ['question', 'matiere', 'date', 'button'];
 
-  @ViewChild(MatSort) sort: MatSort;
+    columnsToDisplay = ['Question', 'Matière', 'Date de création', '' ];
 
-	QuestionReponseArray: QuestionReponse[];
+    @ViewChild(MatSort, { static: false }) sort: MatSort;
 
-	constructor() { }
+    allQuestions: MatTableDataSource<Question>;
+    questions: MatTableDataSource<Question>;
+    currentQuestion: Question;
+    showQuestion: boolean;
+    intervalle: Date[];
+    dataDialog: dataDialog;
 
-	ngOnInit() {
-		this.QuestionReponseArray = QUESTIONSREPONSES;
-		//this.dataSource.sort = this.sort;
-	}
+    constructor(private questionService: QuestionService, public dialog: MatDialog) { 
+        this.showQuestion = false;
+        this.intervalle = [];
+    }
 
+    ngOnInit() {
+        this.getQuestions();
+        //this.dataSource.sort = this.sort;
+    }
+
+    getQuestions(): void {
+        this.questionService.getQuestions()
+        .subscribe((questions) => {
+
+            this.allQuestions = new MatTableDataSource(questions.records);
+            this.questions = new MatTableDataSource(questions.records);
+            this.questions.filterPredicate = (data: Question, filter: string) => {
+
+                let today = new Date(Date.now());
+                let todayRepetition = 0;
+                let reponse = false;
+
+                this.intervalle = [];
+
+                ECART.forEach((element, index)=>{
+                    let intervalDate = new Date();
+                    let date = new Date(data.date) ;
+                    intervalDate.setDate(date.getDate() + element);
+                    this.intervalle.push(intervalDate);
+                    if (today >= intervalDate) {
+                        todayRepetition = index;
+                    }
+                })
+
+                if(data.repetition < todayRepetition) data.repetition = todayRepetition;
+
+                if(data.repetition === this.intervalle.length-1) {
+                    reponse = (today >= this.intervalle[data.repetition]);
+                } else 
+                if(data.repetition < this.intervalle.length-1) {
+                    reponse = (this.intervalle[data.repetition] <= today) && (today < this.intervalle[+data.repetition + 1])
+                }
+
+                return reponse;
+
+                //return data.matiere === filter;
+            }
+
+            this.questions.filter = "Histoire";
+        });
+    }
+
+    show(question: Question): void {
+        this.currentQuestion = question;
+        this.showQuestion = true;
+    }
+
+
+    /* configure filter */
+
+
+    /*applyFilter(filterValue: string) {
+        this.questions.filter = filterValue;
+    }*/
+
+    questionChecked() {
+        this.showQuestion = false;
+        this.questions.filteredData[this.questions.filteredData.indexOf(this.currentQuestion)].repetition++;
+        this.questions.filter = "Histoire";
+    }
+
+    addQuestion() {
+        this.openDialog();
+    }
+
+    openDialog(): void {
+
+        this.dataDialog = {
+            matiere: "",
+            question: "",
+            reponse: ""
+        };
+
+        const dialogRef = this.dialog.open(AddQuestionDialogComponent, {
+            width: '700px',
+            data: this.dataDialog
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.dataDialog = result;
+            if(this.dataDialog && this.dataDialog.matiere && this.dataDialog.question && this.dataDialog.reponse) {
+                let today = new Date(Date.now());
+                let newQuestion: Question = {
+                    matiere: this.dataDialog.matiere,
+                    question: this.dataDialog.question,
+                    reponse: this.dataDialog.reponse,
+                    date: today.getFullYear()+"-"+("0"+(today.getMonth()+1)).slice(-2)+"-"+today.getDate(),
+                    repetition: 0
+                };
+                this.questionService
+                .addQuestion(newQuestion)
+                .subscribe((question) => {
+                    console.dir(question);
+                });
+            }
+        });
+        
+    }
+
+    delete(id: number): void {
+        this.questionService
+            .deleteQuestion(id)
+            .subscribe((res: any) => {
+                console.log(res.message);
+                this.getQuestions();
+            });
+    }
 
 }

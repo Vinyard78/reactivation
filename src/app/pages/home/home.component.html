@@ -1,102 +1,124 @@
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-12">
-			<mat-list>
-				<!--<h3 mat-subheader>Folders</h3>-->
-				<div *ngFor="let questionReponse of QuestionReponseArray">
-					<!--<mat-icon mat-list-icon>folder</mat-icon>-->
-					<button mat-button class="w-100">
-						<h4>{{questionReponse.matiere}}</h4>
-						<p > {{questionReponse.date | date: 'dd/MM/yyyy'}} </p>
-						<p > {{questionReponse.question}} </p>
-						<p > {{questionReponse.reponse}} </p>
-					</button>
-					<mat-divider></mat-divider>
-				</div>
-			</mat-list>
+		<div class="col">
+			<button mat-flat-button (click)="addQuestion()">
+				<mat-icon mat-list-icon>add</mat-icon>
+			</button>  
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-6" [style.display]="showQuestion ? 'none' : 'block'">
+			<table mat-table [dataSource]="allQuestions" matSort class="mat-elevation-z8 w-100">
 
-			<mat-accordion>
-				<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
-					<mat-expansion-panel-header>
-						<mat-panel-title>
-							Self aware panel
-						</mat-panel-title>
-						<mat-panel-description>
-							Currently I am {{panelOpenState ? 'open' : 'closed'}}
-						</mat-panel-description>
-					</mat-expansion-panel-header>
-					<p>I'm visible because I am open</p>
-				</mat-expansion-panel>
-			</mat-accordion>
-
-			<!--<table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 w-100">
-
-				<ng-container matColumnDef="position">	
-					<th mat-header-cell *matHeaderCellDef mat-sort-header> Matière </th>
-					<td mat-cell *matCellDef="let element"> {{element.matiere}} </td>
-				</ng-container>
-
-				<ng-container matColumnDef="name">
-					<th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
-					<td mat-cell *matCellDef="let element"> {{element.date | date: 'dd/MM/yyyy'}} </td>
-				</ng-container>
-
-				<ng-container matColumnDef="weight">
+				<ng-container matColumnDef="question">
 					<th mat-header-cell *matHeaderCellDef mat-sort-header> Question </th>
-					<td mat-cell *matCellDef="let element"> {{element.question}} </td>
+					<td mat-cell *matCellDef="let element">
+						<mat-accordion>
+							<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+								<mat-expansion-panel-header>
+									<mat-panel-description>
+										{{ element.question }}
+									</mat-panel-description>
+								</mat-expansion-panel-header>
+								<p>{{ element.reponse }}</p>
+							</mat-expansion-panel>
+						</mat-accordion>
+					</td>
 				</ng-container>
 
-				<ng-container matColumnDef="symbol">
-					<th mat-header-cell *matHeaderCellDef mat-sort-header> Réponse </th>
-					<td mat-cell *matCellDef="let element"> {{element.reponse}} </td>
+				<ng-container matColumnDef="matiere">	
+					<th mat-header-cell *matHeaderCellDef mat-sort-header> Matière </th>
+					<td mat-cell *matCellDef="let element"> {{ element.matiere }} </td>
+				</ng-container>
+
+				<ng-container matColumnDef="date">
+					<th mat-header-cell *matHeaderCellDef mat-sort-header> Date de création </th>
+					<td mat-cell *matCellDef="let element"> {{ element.date | date: 'dd/MM/yyyy' }} </td>
+				</ng-container>
+
+				<ng-container matColumnDef="button">
+					<th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
+					<td mat-cell *matCellDef="let element"> 
+						<button mat-flat-button (click)="show(element)">
+							<mat-icon mat-list-icon>fullscreen</mat-icon>
+						</button>
+						<button mat-flat-button (click)="delete(element.id)">
+							<mat-icon mat-list-icon>delete_outline</mat-icon>
+						</button>  
+					</td>
 				</ng-container>
 
 				<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 				<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-			</table>-->
+			</table>
+		</div>
+		<div class="col-6" [style.display]="showQuestion ? 'none' : 'block'">
 
 
-			<table mat-table
-		       [dataSource]="dataSource" multiTemplateDataRows
-		       class="mat-elevation-z8">
-		  <ng-container matColumnDef="{{column}}" *ngFor="let column of columnsToDisplay">
-		    <th mat-header-cell *matHeaderCellDef> {{column}} </th>
-		    <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
-		  </ng-container>
+			<table mat-table [dataSource]="questions" matSort class="mat-elevation-z8 w-100">
 
-		  <!-- Expanded Content Column - The detail row is made up of this one column that spans across all columns -->
-		  <ng-container matColumnDef="expandedDetail">
-		    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplay.length">
-		      <div class="example-element-detail"
-		           [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
-		        <div class="example-element-diagram">
-		          <div class="example-element-position"> {{element.position}} </div>
-		          <div class="example-element-symbol"> {{element.symbol}} </div>
-		          <div class="example-element-name"> {{element.name}} </div>
-		          <div class="example-element-weight"> {{element.weight}} </div>
-		        </div>
-		        <div class="example-element-description">
-		          {{element.description}}
-		          <span class="example-element-description-attribution"> -- Wikipedia </span>
-		        </div>
-		      </div>
-		    </td>
-		  </ng-container>
+			
+				<ng-container matColumnDef="question">
+					<th mat-header-cell *matHeaderCellDef mat-sort-header> Question </th>
+					
+					<td mat-cell *matCellDef="let element">
+						<mat-accordion>
+							<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false">
+								<mat-expansion-panel-header>
+									<mat-panel-description>
+										{{ element.question }}
+									</mat-panel-description>
+								</mat-expansion-panel-header>
+								<p>{{ element.reponse }}</p>
+							</mat-expansion-panel>
+						</mat-accordion>
+					</td>
+				</ng-container>
 
-		  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-		  <tr mat-row *matRowDef="let element; columns: columnsToDisplay;"
-		      class="example-element-row"
-		      [class.example-expanded-row]="expandedElement === element"
-		      (click)="expandedElement = expandedElement === element ? null : element">
-		  </tr>
-		  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
-		</table>
+				<ng-container matColumnDef="matiere">	
+					<th mat-header-cell *matHeaderCellDef mat-sort-header> Matière </th>
+					<td mat-cell *matCellDef="let element"> {{ element.matiere }} </td>
+				</ng-container>
 
+				<ng-container matColumnDef="date">
+					<th mat-header-cell *matHeaderCellDef mat-sort-header> Date </th>
+					<td mat-cell *matCellDef="let element"> {{ element.date | date: 'dd/MM/yyyy' }} </td>
+				</ng-container>
 
+				<ng-container matColumnDef="button">
+					<th mat-header-cell *matHeaderCellDef mat-sort-header>  </th>
+					<td mat-cell *matCellDef="let element"> 
+						<button mat-flat-button (click)="show(element)">
+							<mat-icon mat-list-icon>fullscreen</mat-icon>
+						</button>
+						<button mat-flat-button (click)="delete(element.id)">
+							<mat-icon mat-list-icon>delete_outline</mat-icon>
+						</button>  
+					</td>
+				</ng-container>
+
+				<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+				<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+			</table>
 		</div>
 	</div>
+
+	<div *ngIf="currentQuestion" class="row justify-content-center align-items-center" [style.height]="'500px'" [style.display]="showQuestion ? 'flex' : 'none'">
+		<div>
+			<button mat-fab (click)="showQuestion = false;reponse.style.display = 'none'">
+				<mat-icon mat-list-icon>close</mat-icon>
+			</button>
+		</div>
+		<div class="col-10 text-center">
+			<h4>{{ currentQuestion.question }}</h4>
+			<button mat-flat-button (click)="reponse.style.display = 'block'">Réponse</button>
+			<div #reponse [style.display]="'none'">
+				<h4>{{ currentQuestion.reponse }}</h4>
+				<button mat-fab (click)="questionChecked();reponse.style.display = 'none'">
+					<mat-icon mat-list-icon>check</mat-icon>
+				</button>
+			</div>
+		</div>
+	</div>
+
 </div>
-
-
-
-

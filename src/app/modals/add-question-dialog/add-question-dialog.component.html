@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>Entrez votre question à ajouter</h1>
+
+<div mat-dialog-content>
+	<div class="form-container">
+		<mat-form-field>
+			<input matInput placeholder="Matière" [(ngModel)]="data.matiere">
+		</mat-form-field>
+		<mat-form-field>
+			<input matInput placeholder="Question" [(ngModel)]="data.question">
+		</mat-form-field>
+		<mat-form-field>
+			<input matInput placeholder="Réponse" [(ngModel)]="data.reponse">
+		</mat-form-field>
+	</div>
+</div>
+<div mat-dialog-actions>
+	<button mat-button [mat-dialog-close]="data" cdkFocusInitial>Ajouter</button>
+	<button mat-button (click)="onNoClick()">Retour</button>
+</div>
