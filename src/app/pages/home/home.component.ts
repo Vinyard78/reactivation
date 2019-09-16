@@ -91,9 +91,11 @@ export class HomeComponent {
     }*/
 
     questionChecked() {
+        let index = this.questions.filteredData.indexOf(this.currentQuestion);
         this.showQuestion = false;
-        this.questions.filteredData[this.questions.filteredData.indexOf(this.currentQuestion)].repetition++;
+        this.questions.filteredData[index].repetition++;
         this.questions.filter = "Histoire";
+        this.update(this.questions.filteredData[index]);
     }
 
     addQuestion() {
@@ -118,6 +120,7 @@ export class HomeComponent {
             if(this.dataDialog && this.dataDialog.matiere && this.dataDialog.question && this.dataDialog.reponse) {
                 let today = new Date(Date.now());
                 let newQuestion: Question = {
+                    id: null,
                     matiere: this.dataDialog.matiere,
                     question: this.dataDialog.question,
                     reponse: this.dataDialog.reponse,
@@ -137,6 +140,15 @@ export class HomeComponent {
     delete(id: number): void {
         this.questionService
             .deleteQuestion(id)
+            .subscribe((res: any) => {
+                console.log(res.message);
+                this.getQuestions();
+            });
+    }
+
+    update(question: Question): void {
+        this.questionService
+            .updateQuestion(question, question.id)
             .subscribe((res: any) => {
                 console.log(res.message);
                 this.getQuestions();

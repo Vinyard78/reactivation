@@ -7,7 +7,7 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-6" [style.display]="showQuestion ? 'none' : 'block'">
+		<!--<div class="col-6" [style.display]="showQuestion ? 'none' : 'block'">
 			<table mat-table [dataSource]="allQuestions" matSort class="mat-elevation-z8 w-100">
 
 				<ng-container matColumnDef="question">
@@ -51,8 +51,8 @@
 				<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 				<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 			</table>
-		</div>
-		<div class="col-6" [style.display]="showQuestion ? 'none' : 'block'">
+		</div>-->
+		<div class="col-12" [style.display]="showQuestion ? 'none' : 'block'">
 
 
 			<table mat-table [dataSource]="questions" matSort class="mat-elevation-z8 w-100">

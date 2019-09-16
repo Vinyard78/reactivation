@@ -62,6 +62,7 @@ const httpOptions = {
 
 export interface Question {
 	date: string;
+	id: number;
 	question: string;
 	reponse: string;
 	matiere: string;
@@ -100,12 +101,12 @@ export class QuestionService {
 	}
 
 	// PUT
-	/*updateHero (hero: Hero): Observable<Hero> {
-		return this.http.put<Hero>(this.heroesUrl, hero, httpOptions)
+	updateQuestion (question: Question, id: number): Observable<{}> {
+		return this.http.put<any>(questionURL + "update.php" + "?id=" + id, question, httpOptions)
 		.pipe(
 			catchError(this.handleError)
-			);
-	}*/
+		);
+	}
 
 	// GET
 	/*getSchedule() {
