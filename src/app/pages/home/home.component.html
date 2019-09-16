@@ -57,7 +57,7 @@
 						<button mat-flat-button (click)="delete(element.id)">
 							<mat-icon mat-list-icon>delete_outline</mat-icon>
 						</button>  
-	<div class="row justify-content-center align-items-center bob" [style.height]="'500px'" [class.show]="showQuestion">
+	<!--<div class="row justify-content-center align-items-center bob" [style.height]="'500px'" [class.show]="showQuestion">
 		<div>
 			<button mat-fab (click)="showQuestion = false;reponse.style.display = 'none'">
 				<mat-icon mat-list-icon>close</mat-icon>
@@ -73,7 +73,7 @@
 				</button>
 			</div>
 		</div>
-	</div>
+	</div>-->
 					</td>
 					
 				</ng-container>
@@ -84,7 +84,7 @@
 		</div>
 	</div>
 
-	<!--<div class="row justify-content-center align-items-center bob" [style.height]="'500px'">
+	<div class="row justify-content-center align-items-center" *ngIf="currentQuestion" [style.height]="'500px'" [style.display]="showQuestion ? 'flex' : 'none'">
 		<div>
 			<button mat-fab (click)="showQuestion = false;reponse.style.display = 'none'">
 				<mat-icon mat-list-icon>close</mat-icon>
@@ -100,6 +100,6 @@
 				</button>
 			</div>
 		</div>
-	</div>-->
+	</div>
 
 </div>

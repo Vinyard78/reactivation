@@ -102,7 +102,7 @@ export class HomeComponent {
         let index = this.questions.filteredData.indexOf(this.currentQuestion);
         this.showQuestion = false;
         this.questions.filteredData[index].repetition++;
-        this.updateQuestion(this.questions.filteredData[index]);
+        this.update(this.questions.filteredData[index]);
         this.questions.filter = this.filterValue;
     }
 
