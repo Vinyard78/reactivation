@@ -15,7 +15,7 @@ puis entrez la commande suivante pour installer les dependances du projet:
 sudo npm install
 
 Executer ensuite la commande suivante pour corriger automatiquement les eventuelles erreurs entre les dependances:
-sudo npm fix audit
+sudo npm audit fix
 
 meme si toutes les erreurs ne sont pas corrigées, vous pouvez maintenant tester le projet en local en lançant la commande suivante :
 ng serve --open
