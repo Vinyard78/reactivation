@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatSortable, MatTableDataSource, MatDialog } from '@angular/material';
 import { QuestionService, Question } from '../../services/question.service';
 import { AddQuestionDialogComponent, dataDialog } from '../../modals/add-question-dialog/add-question-dialog.component';
 
@@ -81,6 +81,7 @@ export class HomeComponent {
             }
 
             this.questions.filter = this.filterValue;
+            this.sort.sort(({ id: 'matiere', start: 'asc'}) as MatSortable);
             this.questions.sort = this.sort;
 
         });
