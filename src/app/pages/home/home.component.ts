@@ -1,9 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
-import { MatSort, MatSortable, MatTableDataSource, MatDialog } from '@angular/material';
+import { MatSort, MatTableDataSource, MatDialog } from '@angular/material';
 import { QuestionService, Question } from '../../services/question.service';
 import { AddQuestionDialogComponent, dataDialog } from '../../modals/add-question-dialog/add-question-dialog.component';
-
-/*declare var MathJax:any;*/
 
 const ECART:number[] = [2,6,13,30,90];
 
@@ -21,30 +19,32 @@ export class HomeComponent {
     @ViewChild(MatSort, { static: false }) sort: MatSort;
 
     questions: MatTableDataSource<Question>;
-    currentQuestion: Question;
-    showQuestion: boolean;
+    showQuestion: number;
+    showReponse: boolean;
     intervalle: Date[];
     dataDialog: dataDialog;
     filterValue: string;
 
     constructor(private questionService: QuestionService, public dialog: MatDialog) { 
-        this.showQuestion = false;
+        this.showQuestion = -1;
+        this.showReponse = false;
         this.intervalle = [];
         this.filterValue = "today";
     }
 
     ngOnInit() {
-        this.getQuestions();
+        this.getQuestions(()=>{
+            this.applySort('matiere');
+        });        
     }
 
-    getQuestions(): void {
+    getQuestions(callback?: Function): void {
         this.questionService.getQuestions()
         .subscribe((questions) => {
 
             this.questions = new MatTableDataSource(questions.records);
 
             this.questions.filterPredicate = (data: Question, filter: string) => {
-                //this.parseMath();
                 switch(filter) {
                     case "all": return true; break;
                     case "today": 
@@ -80,31 +80,29 @@ export class HomeComponent {
                 //return data.matiere === filter;
             }
 
-            this.questions.filter = this.filterValue;
-            this.sort.sort(({ id: 'matiere', start: 'asc'}) as MatSortable);
-            this.questions.sort = this.sort;
-
+            this.applyFilter();
+            if (callback) callback();
         });
     }
 
-    show(question: Question): void {
-        this.currentQuestion = question;
-        this.showQuestion = true;
-        //this.parseMath();
-       
-    }
-
-    applyFilter(filterValue: string) {
-        this.filterValue = filterValue;
-        this.questions.filter = filterValue;
-    }
-
-    questionChecked() {
-        let index = this.questions.filteredData.indexOf(this.currentQuestion);
-        this.showQuestion = false;
-        this.questions.filteredData[index].repetition++;
-        this.update(this.questions.filteredData[index]);
+    applyFilter(filterValue?: string) {
+        if(filterValue) this.filterValue = filterValue;
         this.questions.filter = this.filterValue;
+    }
+
+    applySort(id: string, start?: 'asc' | 'desc') {
+        this.sort.sort({ 'id': id, 'start': start || 'asc', 'disableClear': true});
+        this.questions.sort = this.sort;
+    }
+
+    questionChecked(question: Question) {
+        question.repetition++;
+        this.update(question);
+    }
+
+    closeQuestion() {
+        this.showQuestion = -1; 
+        this.showReponse = false;
     }
 
     addQuestion() {
@@ -135,8 +133,10 @@ export class HomeComponent {
                 this.questionService
                 .addQuestion(newQuestion)
                 .subscribe((question) => {
-                    console.dir(question);
-                    this.getQuestions();
+                    this.getQuestions(()=>{
+                        this.applySort('matiere');
+                        this.applySort('matiere');
+                    });
                 });
             }
         });
@@ -148,7 +148,10 @@ export class HomeComponent {
             .deleteQuestion(id)
             .subscribe((res: any) => {
                 console.log(res.message);
-                this.getQuestions();
+                this.getQuestions(()=>{
+                    this.applySort('matiere');
+                    this.applySort('matiere');
+                });
             });
     }
 
@@ -157,16 +160,11 @@ export class HomeComponent {
             .updateQuestion(question)
             .subscribe((res: any) => {
                 console.log(res.message);
-                this.getQuestions();
+                this.getQuestions(()=>{
+                    this.applySort('matiere');
+                    this.applySort('matiere');
+                });
             });
-    }
-
-    parseMath() {
-        /*if((question.question.search(/[$][$]/) >= 0) || (question.reponse.search(/[$][$]/) >= 0)) {
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-            MathJax.Hub.Queue(["Typeset", MathJax.Hub]);
-        }*/
     }
 
 }
