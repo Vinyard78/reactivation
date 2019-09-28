@@ -1,1 +1,32 @@
-<router-outlet></router-outlet>
+<mat-toolbar color="primary" class="position-fixed">
+  	<mat-toolbar-row>
+    	<span routerLink="/home">Reactivation</span>
+    	<div class="container">
+    		<div class="col">
+    			<div class="row justify-content-between">
+		    		<button type="button" mat-flat-button routerLink="/home">
+		        		<mat-icon mat-list-icon>home</mat-icon>
+		    		</button>
+		    		<button type="button" mat-button (click)="drawer.toggle()">
+		    			<mat-icon mat-list-icon>menu</mat-icon>
+		    		</button>
+    			</div>
+    		</div>
+    	</div>
+  	</mat-toolbar-row>
+</mat-toolbar>
+
+<mat-drawer-container class="mat-drawer-container">
+  <mat-drawer #drawer class="sidenav" mode="side">
+    <p>Menu</p>
+    <!--<p *ngIf="showFiller">Lorem, ipsum dolor sit amet consectetur.</p>
+    <button (click)="showFiller = !showFiller" mat-raised-button>
+      Toggle extra text
+    </button>-->
+  </mat-drawer>
+
+  <div class="sidenav-content">
+    <router-outlet></router-outlet>
+  </div>
+
+</mat-drawer-container>

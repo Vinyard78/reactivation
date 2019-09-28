@@ -59,12 +59,16 @@ import { HomeComponent } from './pages/home/home.component';
 
 /* Modals */
 import { AddQuestionDialogComponent } from './modals/add-question-dialog/add-question-dialog.component';
+import { QuestionsComponent } from './pages/questions/questions.component';
+import { AddClasseDialogComponent } from './modals/add-classe-dialog/add-classe-dialog.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    AddQuestionDialogComponent
+    AddQuestionDialogComponent,
+    QuestionsComponent,
+    AddClasseDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -122,7 +126,8 @@ import { AddQuestionDialogComponent } from './modals/add-question-dialog/add-que
     ScrollingModule
   ],
   entryComponents: [
-    AddQuestionDialogComponent
+    AddQuestionDialogComponent,
+    AddClasseDialogComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

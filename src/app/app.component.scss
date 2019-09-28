@@ -1,0 +1,22 @@
+.mat-toolbar {
+    z-index:10;
+}
+
+.mat-drawer-container {
+
+    min-height: 1000px;
+    top: 4rem;
+
+    .sidenav-content {
+        display: flex;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidenav {
+        padding: 20px;
+    }  
+}
+
+

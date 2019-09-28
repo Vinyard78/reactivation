@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-import { catchError, retry } from 'rxjs/operators';
-import { Observable, throwError, of } from 'rxjs';
+import { catchError, retry, tap } from 'rxjs/operators';
+import { Observable, throwError, of} from 'rxjs';
 
 const questionURL:string = "http://profdupuy.free.fr/reactivation/api/question/";
 
@@ -66,6 +66,7 @@ export interface Question {
 	reponse: string;
 	matiere: string;
 	repetition: number;
+	classe: string;
 	/*repetitionsTotales: number;
 	periodeApprentissage: number;*/
 }
@@ -130,6 +131,14 @@ export class QuestionService {
 	    return this.http.get<any>(questionURL + "read.php", httpOptions)
 		.pipe(
 			retry(3), // retry a failed request up to 3 times
+			catchError(this.handleError) // then handle the error
+		);
+	}
+
+	getGroups(): Observable<any> {
+	    //return of(QUESTIONS);
+	    return this.http.get<any>(questionURL + "read_groups.php", httpOptions)
+		.pipe(
 			catchError(this.handleError) // then handle the error
 		);
 	}
